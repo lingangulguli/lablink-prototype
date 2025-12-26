@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FuSSO - Lab-Student Research Matching Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: #f5f7fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+
+        nav button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            margin-left: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        nav button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        nav button.active {
+            background: white;
+            color: #667eea;
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+            animation: fadeIn 0.4s;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Home Page */
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 12px;
+            margin: 40px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .role-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .role-card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .role-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .role-card ul {
+            list-style: none;
+            text-align: left;
+        }
+
+        .role-card li {
+            padding: 8px 0;
+            color: #555;
+        }
+
+        .role-card li:before {
+            content: "✓ ";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        /* Forms */
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .form-section h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .form-section p {
+            color: #7f8c8d;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .tag-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .tag:hover {
+            background: #e0e0e0;
+        }
+
+        .tag.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f5f7fa;
+            color: #2c3e50;
+        }
+
+        .btn-secondary:hover {
+            background: #e8eaf0;
+        }
+
+        /* Opportunity Cards */
+        .opportunities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .opportunity-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .opportunity-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .match-score {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .opportunity-card h3 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 20px;
+        }
+
+        .lab-info {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .opportunity-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .opportunity-tag {
+            padding: 4px 12px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .match-reason {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 3px solid #667eea;
+        }
+
+        .match-reason strong {
+            color: #667eea;
+        }
+
+        /* Filters */
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        /* Candidate Cards */
+        .candidate-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .candidate-info {
+            flex: 1;
+        }
+
+        .candidate-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .candidate-meta {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .evaluation-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .metric {
+            text-align: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .candidate-actions {
+            display: flex;
+            gap: 10px;
+            margin-left: 20px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        /* Progress Indicator */
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .opportunities-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-row {
+                grid-template-columns: 1fr;
+            }
+
+            .candidate-card {
+                flex-direction: column;
+            }
+
+            .candidate-actions {
+                margin-left: 0;
+                margin-top: 15px;
+            }
+        }
+
+        /* Success Message */
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div>
+                <div class="logo">FuSSO</div>
+                <div class="logo-subtitle">Lab-Student Research Matching Platform</div>
+            </div>
+            <nav>
+                <button onclick="showPage('home')" id="nav-home" class="active">首页</button>
+                <button onclick="showPage('student-profile')" id="nav-student">学生端</button>
+                <button onclick="showPage('lab-dashboard')" id="nav-lab">实验室端</button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Home Page -->
+        <div id="home" class="page active">
+            <div class="hero">
+                <h1>连接学生与实验室</h1>
+                <p>通过结构化信息、智能匹配和透明化沟通，让科研机会分配更加高效和公平</p>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">1,000+</div>
+                        <div class="stat-label">活跃学生</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">100+</div>
+                        <div class="stat-label">合作实验室</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">85%</div>
+                        <div class="stat-label">匹配成功率</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">92%</div>
+                        <div class="stat-label">6个月留存率</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="role-cards">
+                <div class="role-card" onclick="showPage('student-profile')">
+                    <h3>我是学生</h3>
+                    <ul>
+                        <li>创建个性化研究Profile</li>
+                        <li>浏览匹配的科研机会</li>
+                        <li>了解实验室文化和工作方式</li>
+                        <li>一键申请心仪项目</li>
+                    </ul>
+                </div>
+                <div class="role-card" onclick="showPage('lab-dashboard')">
+                    <h3>我是实验室</h3>
+                    <ul>
+                        <li>建立详细的Lab Account</li>
+                        <li>发布招募机会</li>
+                        <li>智能筛选优质候选人</li>
+                        <li>快速完成招募流程</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Profile Page -->
+        <div id="student-profile" class="page">
+            <div class="form-section">
+                <h2>创建你的研究 Profile</h2>
+                <p>完整的Profile可以帮助你获得更精准的匹配推荐</p>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 60%"></div>
+                </div>
+                <p style="text-align: right; color: #7f8c8d; font-size: 14px;">完成度: 60%</p>
+
+                <form id="student-form">
+                    <div class="form-group">
+                        <label>姓名</label>
+                        <input type="text" placeholder="请输入你的姓名" value="张同学">
+                    </div>
+
+                    <div class="form-group">
+                        <label>专业</label>
+                        <select>
+                            <option>计算机科学</option>
+                            <option>统计学</option>
+                            <option>生物学</option>
+                            <option>化学</option>
+                            <option>物理学</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>年级</label>
+                        <select>
+                            <option>大二</option>
+                            <option>大三</option>
+                            <option selected>大四</option>
+                            <option>硕士一年级</option>
+                            <option>硕士二年级</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>每周可投入时间（小时）</label>
+                        <input type="number" value="15" min="5" max="40">
+                    </div>
+
+                    <div class="form-group">
+                        <label>技能标签（点击选择）</label>
+                        <div class="tag-selector" id="skills-tags">
+                            <span class="tag selected" onclick="toggleTag(this)">Python</span>
+                            <span class="tag selected" onclick="toggleTag(this)">R</span>
+                            <span class="tag" onclick="toggleTag(this)">MATLAB</span>
+                            <span class="tag selected" onclick="toggleTag(this)">机器学习</span>
+                            <span class="tag" onclick="toggleTag(this)">深度学习</span>
+                            <span class="tag" onclick="toggleTag(this)">数据分析</span>
+                            <span class="tag selected" onclick="toggleTag(this)">统计建模</span>
+                            <span class="tag" onclick="toggleTag(this)">分子生物学</span>
+                            <span class="tag" onclick="toggleTag(this)">实验设计</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>研究兴趣（点击选择）</label>
+                        <div class="tag-selector" id="interest-tags">
+                            <span class="tag selected" onclick="toggleTag(this)">人工智能</span>
+                            <span class="tag selected" onclick="toggleTag(this)">计算神经科学</span>
+                            <span class="tag" onclick="toggleTag(this)">生物信息学</span>
+                            <span class="tag" onclick="toggleTag(this)">量子计算</span>
+                            <span class="tag" onclick="toggleTag(this)">材料科学</span>
+                            <span class="tag" onclick="toggleTag(this)">环境科学</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>个人研究陈述（可选）</label>
+                        <textarea placeholder="简要描述你的研究兴趣和职业目标...">我对人工智能在神经科学中的应用非常感兴趣，特别是使用机器学习方法分析大脑活动数据。希望通过科研经历为将来申请计算神经科学方向的PhD做准备。</textarea>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" onclick="saveProfile()">保存 Profile</button>
+                    <button type="button" class="btn btn-secondary" onclick="showOpportunities()">浏览机会</button>
+                </form>
+
+                <div id="save-success" class="success-message">
+                    ✓ Profile 已保存成功！
+                </div>
+            </div>
+        </div>
+
+        <!-- Opportunities Page -->
+        <div id="opportunities" class="page">
+            <div class="filters">
+                <h2>筛选科研机会</h2>
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label>研究方向</label>
+                        <select>
+                            <option>全部方向</option>
+                            <option selected>人工智能</option>
+                            <option>生物医学</option>
+                            <option>化学材料</option>
+                            <option>物理学</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>机会类型</label>
+                        <select>
+                            <option>全部类型</option>
+                            <option>长期RA</option>
+                            <option>暑期研究</option>
+                            <option>项目合作</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>时间投入</label>
+                        <select>
+                            <option>任意</option>
+                            <option>10小时以下/周</option>
+                            <option>10-20小时/周</option>
+                            <option>20+小时/周</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>报酬</label>
+                        <select>
+                            <option>不限</option>
+                            <option>有偿</option>
+                            <option>学分</option>
+                            <option>志愿</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <h2 style="margin: 30px 0 20px 0;">为你推荐的机会</h2>
+            <div class="opportunities-grid">
+                <div class="opportunity-card" onclick="showOpportunityDetail(0)">
+                    <span class="match-score">匹配度: 92%</span>
+                    <h3>计算神经科学实验室 - 长期RA</h3>
+                    <div class="lab-info">
+                        <strong>PI:</strong> Dr. Sarah Chen | <strong>截止日期:</strong> 2025-02-15
+                    </div>
+                    <p style="color: #555; margin: 15px 0;">使用机器学习方法分析fMRI数据，研究大脑决策机制。需要Python和统计背景，有深度学习经验者优先。</p>
+                    <div class="opportunity-tags">
+                        <span class="opportunity-tag">Python</span>
+                        <span class="opportunity-tag">机器学习</span>
+                        <span class="opportunity-tag">神经科学</span>
+                        <span class="opportunity-tag">15小时/周</span>
+                        <span class="opportunity-tag">有偿</span>
+                    </div>
+                    <div class="match-reason">
+                        <strong>为什么推荐:</strong> 你的Python和机器学习背景完全匹配项目需求，而且你的核心兴趣"计算神经科学"与项目方向高度一致。
+                    </div>
+                </div>
+
+                <div class="opportunity-card">
+                    <span class="match-score">匹配度: 85%</span>
+                    <h3>AI安全研究组 - 项目合作</h3>
+                    <div class="lab-info">
+                        <strong>PI:</strong> Dr. Michael Zhang | <strong>截止日期:</strong> 2025-01-30
+                    </div>
+                    <p style="color: #555; margin: 15px 0;">研究对抗性样本检测方法，探索深度学习模型的鲁棒性。寻找有扎实机器学习基础的合作者。</p>
+                    <div class="opportunity-tags">
+                        <span class="opportunity-tag">深度学习</span>
+                        <span class="opportunity-tag">Python</span>
+                        <span class="opportunity-tag">PyTorch</span>
+                        <span class="opportunity-tag">10-15小时/周</span>
+                        <span class="opportunity-tag">学分</span>
+                    </div>
+                    <div class="match-reason">
+                        <strong>为什么推荐:</strong> 项目需要的Python和统计技能与你的背景匹配，虽然AI安全不是你的核心兴趣，但与你的"人工智能"兴趣相关。
+                    </div>
+                </div>
+
+                <div class="opportunity-card">
+                    <span class="match-score">匹配度: 78%</span>
+                    <h3>生物信息学实验室 - 暑期研究</h3>
+                    <div class="lab-info">
+                        <strong>PI:</strong> Dr. Lisa Wang | <strong>截止日期:</strong> 2025-03-01
+                    </div>
+                    <p style="color: #555; margin: 15px 0;">使用统计和机器学习方法分析基因表达数据。暑期10周项目，适合有编程和统计背景的学生。</p>
+                    <div class="opportunity-tags">
+                        <span class="opportunity-tag">R</span>
+                        <span class="opportunity-tag">统计分析</span>
+                        <span class="opportunity-tag">生物信息学</span>
+                        <span class="opportunity-tag">全职暑期</span>
+                        <span class="opportunity-tag">有偿</span>
+                    </div>
+                    <div class="match-reason">
+                        <strong>为什么推荐:</strong> 你掌握的R和统计建模技能符合项目要求，这是一个将统计应用到生物领域的好机会。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lab Dashboard Page -->
+        <div id="lab-dashboard" class="page">
+            <div class="form-section">
+                <h2>实验室管理面板</h2>
+                <p>欢迎，Dr. Sarah Chen | 计算神经科学实验室</p>
+
+                <div style="margin: 30px 0;">
+                    <h3 style="margin-bottom: 15px;">当前招募机会</h3>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                        <h4 style="color: #667eea;">计算神经科学实验室 - 长期RA</h4>
+                        <p style="margin: 10px 0; color: #555;">使用机器学习方法分析fMRI数据，研究大脑决策机制</p>
+                        <p style="color: #7f8c8d; font-size: 14px;">发布时间: 2024-12-20 | 已收到申请: 12份</p>
+                    </div>
+                </div>
+
+                <h3 style="margin: 30px 0 15px 0;">候选人列表（按匹配度排序）</h3>
+                
+                <div class="candidate-card">
+                    <div class="candidate-info">
+                        <div class="candidate-name">张同学</div>
+                        <div class="candidate-meta">计算机科学 大四 | 每周可投入15小时</div>
+                        
+                        <div style="margin: 15px 0;">
+                            <strong style="color: #2c3e50;">核心技能:</strong> Python, R, 机器学习, 统计建模
+                        </div>
+                        <div style="margin: 15px 0;">
+                            <strong style="color: #2c3e50;">研究兴趣:</strong> 人工智能, 计算神经科学
+                        </div>
+                        
+                        <div class="evaluation-metrics">
+                            <div class="metric">
+                                <div class="metric-label">技能匹配</div>
+                                <div class="metric-value">95%</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">兴趣一致性</div>
+                                <div class="metric-value">98%</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">稳定性预期</div>
+                                <div class="metric-value">85%</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">经验深度</div>
+                                <div class="metric-value">80%</div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: #f0f7ff; padding: 15px; border-radius: 6px; margin-top: 15px; border-left: 3px solid #667eea;">
+                            <strong style="color: #667eea;">申请说明:</strong><br>
+                            我对使用机器学习分析神经数据非常感兴趣。在《概率论》课程中，我完成了一个使用贝叶斯方法分析时间序列数据的项目，这让我对神经数据分析产生了浓厚兴趣。
+                        </div>
+                    </div>
+                    <div class="candidate-actions">
+                        <button class="btn btn-primary btn-small" onclick="alert('已联系候选人')">联系</button>
+                        <button class="btn btn-secondary btn-small" onclick="alert('已标记为感兴趣')">感兴趣</button>
+                    </div>
+                </div>
+
+                <div class="candidate-card">
+                    <div class="candidate-info">
+                        <div class="candidate-name">李同学</div>
+                        <div class="candidate-meta">统计学 硕士一年级 | 每周可投入20小时</div>
+                        
+                        <div style="margin: 15px 0;">
+                            <strong style="color: #2c3e50;">核心技能:</strong> R, Python, 统计建模, 数据可视化
+                        </div>
+                        <div style="margin: 15px 0;">
+                            <strong style="color: #2c3e50;">研究兴趣:</strong> 统计方法, 数据科学
+                        </div>
+                        
+                        <div class="evaluation-metrics">
+                            <div class="metric">
+                                <div class="metric-label">技能匹配</div>
+                                <div class="metric-value">88%</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">兴趣一致性</div>
+                                <div class="metric-value">75%</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">稳定性预期</div>
+                                <div class="metric-value">90%</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">经验深度</div>
+                                <div class="metric-value">85%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="candidate-actions">
+                        <button class="btn btn-primary btn-small" onclick="alert('已联系候选人')">联系</button>
+                        <button class="btn btn-secondary btn-small" onclick="alert('已标记为感兴趣')">感兴趣</button>
+                    </div>
+                </div>
+
+                <div class="candidate-card">
+                    <div class="candidate-info">
+                        <div class="candidate-name">王同学</div>
+                        <div class="candidate-meta">生物学 大三 | 每周可投入12小时</div>
+                        
+                        <div style="margin: 15px 0;">
+                            <strong style="color: #2c3e50;">核心技能:</strong> Python, 数据分析, 实验设计
+                        </div>
+                        <div style="margin: 15px 0;">
+                            <strong style="color: #2c3e50;">研究兴趣:</strong> 神经科学, 生物信息学
+                        </div>
+                        
+                        <div class="evaluation-metrics">
+                            <div class="metric">
+                                <div class="metric-label">技能匹配</div>
+                                <div class="metric-value">70%</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">兴趣一致性</div>
+                                <div class="metric-value">85%</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">稳定性预期</div>
+                                <div class="metric-value">75%</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">经验深度</div>
+                                <div class="metric-value">60%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="candidate-actions">
+                        <button class="btn btn-primary btn-small" onclick="alert('已联系候选人')">联系</button>
+                        <button class="btn btn-secondary btn-small" onclick="alert('已标记为感兴趣')">感兴趣</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Remove active class from all nav buttons
+            document.querySelectorAll('nav button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Activate corresponding nav button
+            const navBtn = document.getElementById('nav-' + pageId.split('-')[0]);
+            if (navBtn) navBtn.classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function toggleTag(element) {
+            element.classList.toggle('selected');
+        }
+
+        function saveProfile() {
+            const successMsg = document.getElementById('save-success');
+            successMsg.classList.add('show');
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+            }, 3000);
+        }
+
+        function showOpportunities() {
+            showPage('opportunities');
+        }
+
+        function showOpportunityDetail(id) {
+            alert('查看机会详情功能（在完整版本中会显示详细信息和申请按钮）');
+        }
+    </script>
+</body>
+</html>
